@@ -1,0 +1,15 @@
+# ------------------------------------------------------
+# THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
+# ------------------------------------------------------
+
+type User {
+  id: Int!
+  flag: Boolean!
+  name: String!
+  children: [User!]
+  parent: User
+}
+
+type Query {
+  users: [User!]!
+}
