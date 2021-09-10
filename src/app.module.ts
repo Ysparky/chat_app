@@ -1,15 +1,27 @@
 import { Module } from '@nestjs/common';
-import { AppController } from './app.controller';
-import { AppService } from './app.service';
 import { GraphQLModule } from '@nestjs/graphql';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { UserModule } from './user/user.module';
+import { ConversacionModule } from './conversacion/conversacion.module';
 
 @Module({
   imports: [
-    UserModule,
+    ConversacionModule,
     GraphQLModule.forRoot({
       autoSchemaFile: 'schema.gql',
+      installSubscriptionHandlers: true,
+      formatError: (err) => ({
+        ...err,
+        extensions: {
+          ...err.extensions,
+          exception: null,
+        },
+      }),
+      context: ({ req, connection }) => {
+        if (connection?.context) {
+          return { req: { headers: connection.context } };
+        }
+        return { req };
+      },
     }),
     TypeOrmModule.forRoot({
       type: 'postgres',
@@ -22,7 +34,5 @@ import { UserModule } from './user/user.module';
       synchronize: true,
     }),
   ],
-  controllers: [AppController],
-  providers: [AppService],
 })
 export class AppModule {}
